@@ -1,8 +1,8 @@
 # Instagram Viewer
 
-A local-first viewer for Instagram Saved photos. Import `saved_posts.json`, browse a large saved-photo library, and run a photo slideshow from one responsive page.
+A local-first, media-first viewer for Instagram Saved photos. Import `saved_posts.json`, move through a visual archive field, hide individual resolved frames, and run a configurable slideshow from one responsive page.
 
-The application now ships its first media-first `Cinematic Lightbox` checkpoint. It remains a personal saved-photo reference viewer, not an Instagram downloader, scraper, or full data-export explorer.
+The current interface is a PhotoYoshi-inspired private archive: oversized editorial typography, a deep olive-black canvas, horizontal image navigation, sparse metadata, and an always-available playback dock. It remains a personal reference viewer, not an Instagram downloader, scraper, or full data-export explorer.
 
 Repository: [github.com/bradwang1995/Instagram-Viewer](https://github.com/bradwang1995/Instagram-Viewer)
 
@@ -17,16 +17,22 @@ Live app: [bradwang1995.github.io/Instagram-Viewer](https://bradwang1995.github.
 
 The app does not ask for Instagram credentials and does not upload your JSON file to GitHub, GitHub Pages, or an application server.
 
-## Cinematic Lightbox Redesign
+## PhotoYoshi-Inspired Archive Field
 
-> Implementation status: the first media-first Lightbox checkpoint was implemented and browser-tested in July 2026. Legitimate carousel/media resolution remains the next external-data gate; iframe-only imports continue in an explicitly labeled compatibility mode.
+> Implementation status: the full viewport archive-field redesign was implemented and browser-tested in July 2026. Legitimate carousel/media resolution remains the external-data gate; iframe-only imports continue in an explicitly labeled compatibility mode.
 
-The selected direction is a dark, immersive `Cinematic Lightbox`: the media stage should feel like a private screening room rather than a generic list-and-preview utility. The redesign is intentionally design-heavy and animation-rich, with a restrained black interface, projector-amber highlights, expressive transitions, and a visual queue that supports fast curation.
+The selected direction treats the app as an animated editorial image field instead of a list beside an Instagram viewer. The empty state is deliberately simple: one full-screen composition whose primary action is importing the JSON export. After import, resolved media becomes a continuous horizontal ribbon with creator and collection context beneath each image. Vertical wheel input drives horizontal movement, pointer position adds restrained parallax, and an Index view provides a compact contact sheet.
 
-The goal is not to add motion everywhere. The goal is **heavy art direction with purposeful motion**: the current media, playback state, selection, filtering, and destructive actions should each have a clear visual response, while reading, focus, and media playback remain stable.
+The bottom dock owns the session: progress, Ribbon/Index mode, creator/collection filtering, dwell time, transition duration, transition preset, loop behavior, hidden-media recovery, and full-screen slideshow launch. Motion for React owns component/interaction motion and GSAP owns authored entrance and playback timelines.
 
 ### Implemented Checkpoint
 
+- Replaced the old white Instagram stage and shortcode/date library split with a full-viewport olive-black media canvas.
+- Added a JSON-only upload landing screen modeled on the PhotoYoshi composition without copying or hotlinking its media assets.
+- Added a horizontal, wheel-driven media ribbon and a compact Index view.
+- Shows creator, collection, source-frame position, and source link beneath each resolved frame.
+- Keeps the bottom playback dock visible on desktop and mobile.
+- Mounts iframe compatibility previews only for the selected unresolved item and nearby neighbors instead of the entire library.
 - Added IndexedDB `mediaItems` and `mediaPreferences` tables with deterministic media identity.
 - Migrates existing source posts to honest iframe-compatible media records without fabricating carousel children or thumbnails.
 - Added a thumbnail-based Visual Queue for resolved media and source-group frame counts.
@@ -36,7 +42,7 @@ The goal is not to add motion everywhere. The goal is **heavy art direction with
 - Added Crossfade, Directional Wipe, Depth Zoom, Film Burn, RGB Split, and Ken Burns stage treatments.
 - Added keyboard navigation and curation shortcuts, document-hidden playback pause, fullscreen, and reduced-motion fallbacks.
 - Added an explicit `?demo=1` fixture with eight non-personal source posts and nineteen resolved media items to prove multi-photo source playback.
-- Added responsive desktop/mobile layouts, interaction tests, browser screenshots, and a passing [`design-qa.md`](design-qa.md) report.
+- Added responsive `1280 × 720` and `390 × 844` layouts, interaction tests, same-viewport comparison evidence, and a passing [`DESIGN-QA.md`](DESIGN-QA.md) report.
 
 ### Investigation Findings
 

@@ -4,7 +4,7 @@ Internal implementation tracker for `Instagram Viewer`.
 
 ## Current Product Direction
 
-Build a very small local-first Instagram Saved photo viewer:
+Build a local-first, media-first Instagram Saved photo viewer:
 
 ```text
 Import saved_posts.json
@@ -13,16 +13,16 @@ Extract Instagram `/p/` photo-post URLs
         ↓
 Store local library in IndexedDB
         ↓
-Browse + search + date filters
+Enter a horizontal visual archive
         ↓
-Embedded photo viewer + slideshow
+Filter + hide + configure + slideshow
 ```
 
-The product should remain one page unless a future requirement truly needs more.
+The product remains one page with bottom sheets and a full-screen slideshow overlay.
 
-## Selected Direction: Cinematic Lightbox
+## Selected Direction: PhotoYoshi Archive Field
 
-Status: **first media-first implementation checkpoint completed and browser-tested; media acquisition remains an open gate**.
+Status: **full visual redesign completed and browser-tested; media acquisition remains an open gate**.
 
 The next major version is no longer a layout-only refresh. It changes the application's primary object from a saved Instagram post to an individual resolved media item.
 
@@ -32,7 +32,7 @@ flowchart TD
     B --> C{Media resolution layer}
     C -->|Resolved| D[Individual media items]
     C -->|Unavailable| E[Honest source-unavailable state]
-    D --> F[Visual queue]
+    D --> F[Horizontal archive field]
     F --> G[Filtered playback session]
     G --> H[Transition engine]
     D --> I[Persistent hide/downvote preference]
@@ -42,16 +42,42 @@ flowchart TD
 
 Approved product principles:
 
-- Use the dark, projector-amber `Cinematic Lightbox` concept as the visual baseline.
-- Be design-heavy and animation-rich without making every element move continuously.
-- Make the media stage the product center; treat metadata as supporting context.
-- Replace the shortcode/date library list with a real visual queue when a legitimate thumbnail source exists.
+- Use `photoyoshi.com` as the visual reference: clipped display typography, deep olive-black canvas, centered imagery, sparse editorial metadata, and scroll-driven spatial motion.
+- Make the empty state an upload-only composition rather than an application dashboard.
+- After import, make the media field the product center and treat metadata as supporting context below each image.
+- Replace the shortcode/date library list with a horizontal ribbon and optional contact-sheet Index when legitimate media exists.
 - Flatten multi-photo source posts into media-level playback order.
 - Persist hide/downvote state per media item and keep it reversible.
 - Search primarily by creator, collection, and local tags when those fields are available.
 - Separate slideshow dwell time, transition duration, transition style, ordering, and looping.
+- Keep the session dock visible at the bottom on desktop and mobile.
+- Use Motion for component/interaction motion and GSAP for authored timelines; keep GPU/WebGL optional.
 - Keep local-first privacy as the default and make every network/cache boundary explicit.
 - Do not implement carousel extraction, thumbnails, or GPU media transitions by scraping Instagram or reading a cross-origin iframe.
+
+## Revision 11: PhotoYoshi Archive Field
+
+- [x] Capture desktop, scroll, pointer, and `390 × 844` mobile reference states from `photoyoshi.com`.
+- [x] Replace the legacy white Instagram embed/list split with a full-viewport dark canvas.
+- [x] Add an upload-first landing screen whose only primary task is selecting or dropping a saved-post JSON file.
+- [x] Add a non-personal 19-frame demo route at `?demo=1`.
+- [x] Flatten resolved source frames into one ordered horizontal ribbon.
+- [x] Map vertical wheel input to horizontal archive movement.
+- [x] Add per-frame creator, collection, frame position, hide, and source actions.
+- [x] Add a contact-sheet Index mode without leaving the page.
+- [x] Add creator, collection, text, and hidden-state filters in a bottom sheet.
+- [x] Add dwell, transition duration, six transition presets, loop mode, and hidden-media recovery in a bottom sheet.
+- [x] Keep slideshow controls and media inside the first viewport on desktop and mobile.
+- [x] Limit unresolved Instagram iframes to the selected card and immediate neighbors.
+- [x] Add/update 16 tests across 8 files.
+- [x] Create same-viewport reference/implementation comparison evidence.
+- [x] Pass `DESIGN-QA.md`, TypeScript checking, tests, and the production build.
+
+Remaining work after this checkpoint:
+
+- [ ] Choose a legitimate source for carousel child media, creator metadata, thumbnails, and direct image/video bytes.
+- [ ] Add optional code splitting for the `583.80 kB` minified JavaScript bundle if deployment performance becomes a priority.
+- [ ] Profile large real libraries before introducing queue virtualization or a GPU layer.
 
 ## July 2026 Investigation Findings
 
@@ -269,7 +295,7 @@ No visual queue implementation should promise thumbnails until this gate is reso
 - [x] Add media-queue and Lightbox interaction tests.
 - [x] Run browser interaction tests for navigation, filtering, settings, hide, and restore.
 - [x] Compare the selected reference and implementation in one combined QA artifact.
-- [x] Pass `design-qa.md` with all observed P0/P1/P2 issues fixed.
+- [x] Pass `DESIGN-QA.md` with all observed P0/P1/P2 issues fixed.
 - [x] Pass unit tests, TypeScript checking, and the production build.
 
 Remaining architectural work is intentionally not hidden by this checkpoint:
@@ -430,17 +456,17 @@ Remaining architectural work is intentionally not hidden by this checkpoint:
 
 ## Current Active UI
 
-- [x] Import JSON button.
-- [x] Search field.
-- [x] Saved-date range filter.
-- [x] Infinite library list (20 items per batch).
-- [x] Keyed Instagram iframe preview.
-- [x] Previous and next controls.
-- [x] Play/pause.
-- [x] Shuffle.
-- [x] Slideshow speed selector.
-- [x] Open original Instagram post.
-- [x] Clear local library from the same page.
+- [x] Upload-only empty-library composition with click and drag/drop import.
+- [x] Horizontal, wheel-driven resolved-media ribbon.
+- [x] Contact-sheet Index mode.
+- [x] Creator, collection, local-text, and hidden-state filters.
+- [x] Per-media hide/downvote plus hidden-media restoration.
+- [x] Creator, collection, frame position, and source provenance below images.
+- [x] Configurable dwell time, transition duration, transition preset, and loop mode.
+- [x] Full-screen previous, play/pause, next, hide, settings, and close controls.
+- [x] Explicit iframe compatibility previews for unresolved posts.
+- [x] Responsive bottom dock on desktop and mobile.
+- [x] Non-personal `?demo=1` route containing 19 resolved media records.
 
 ## Tests
 
@@ -456,20 +482,21 @@ Remaining architectural work is intentionally not hidden by this checkpoint:
 
 ## Latest Verification
 
-- [x] `npm test` passes with 12 tests across 7 files.
+- [x] `npm test -- --run` passes with 16 tests across 8 files.
 - [x] `npm run build` passes.
-- [x] The Pages-specific build emits `/Instagram-Viewer/` asset paths and router basename.
-- [x] Local dev server responds at `http://127.0.0.1:5173/`.
+- [x] `npm run lint` passes TypeScript checking.
+- [x] Local dev server responds at `http://127.0.0.1:4317/`.
 - [x] `git status --ignored` shows `saved_posts.json` as ignored.
 - [x] Active router only serves the one-page `HomePage`.
 - [x] Active header has no navigation tabs.
-- [x] Browser QA starts with exactly 20 of 45 demo records.
-- [x] Scrolling automatically expands the rendered list from 20 to 40.
-- [x] Browser QA confirms click selection and Next change the iframe target.
-- [x] Browser QA confirms Play advances after 6 seconds and Pause stops playback.
-- [x] Browser QA confirms search and date filters reduce the library.
-- [x] Browser QA confirms no horizontal overflow at desktop or 390px mobile width.
-- [x] A real local-export photo embed returns a visible photo without a login wall.
+- [x] Browser QA renders all 19 demo media items in Ribbon and Index views.
+- [x] Vertical wheel input advances the horizontal ribbon and updates selection.
+- [x] Creator filtering reduces the demo session to the expected five `@quietframes` media items.
+- [x] Browser QA confirms next media advances within a multi-frame source.
+- [x] Browser QA confirms no document overflow at `1280 × 720` or `390 × 844`.
+- [x] Browser QA confirms slideshow controls and media remain inside both viewports.
+- [x] Same-viewport PhotoYoshi/implementation comparison is stored at `artifacts/photoyoshi-mobile-comparison.png`.
+- [x] Full findings and evidence are recorded in all-caps `DESIGN-QA.md`.
 
 ## Next Candidate Improvements
 

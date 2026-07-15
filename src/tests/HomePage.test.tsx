@@ -1,4 +1,11 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DEFAULT_SETTINGS, type MediaItem, type SavedPost } from "../db/schema";
 import type { MediaQueueItem } from "../features/media/mediaQueue";
@@ -37,7 +44,7 @@ vi.mock("../features/slideshow/shuffle", () => ({
   shuffleArray: <T,>(items: T[]) => [...items].reverse(),
 }));
 
-describe("Cinematic Lightbox workspace", () => {
+describe("Photo archive preview", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     const first = createPost("A", "@north.archive", "Night drives");
@@ -52,30 +59,26 @@ describe("Cinematic Lightbox workspace", () => {
     testState.setMediaVisibility.mockResolvedValue(undefined);
   });
 
-  it("navigates individual frames and hides the selected media item", async () => {
-    const { container } = render(<HomePage />);
+  it("selects a frame from the horizontal preview and hides it", async () => {
+    render(<HomePage />);
+    await act(async () => undefined);
 
-    expect(container.querySelectorAll(".queue-item")).toHaveLength(3);
-    expect(
-      screen.getByText("Frame 1 of 2 · Resolved media"),
-    ).toBeInTheDocument();
+    expect(screen.getAllByTestId("archive-media-card")).toHaveLength(3);
+    const secondFrame = screen.getByRole("button", {
+      name: "@north.archive, frame 2 of 2",
+    });
+    fireEvent.click(secondFrame);
 
+    const selectedCard = secondFrame.closest("article");
+    expect(selectedCard).toHaveClass("is-selected");
     fireEvent.click(
-      screen.getByRole("button", { name: "@north.archive, frame 2 of 2" }),
+      within(selectedCard as HTMLElement).getByRole("button", {
+        name: "Hide this media",
+      }),
     );
-    expect(
-      screen.getByText("Frame 2 of 2 · Resolved media"),
-    ).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: "Next media" }));
-    expect(
-      screen.getByText("Frame 1 of 1 · Resolved media"),
-    ).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: "Hide this media" }));
     await waitFor(() =>
       expect(testState.setMediaVisibility).toHaveBeenCalledWith(
-        "post:B:media:0",
+        "post:A:media:1",
         "hidden",
       ),
     );
@@ -84,14 +87,28 @@ describe("Cinematic Lightbox workspace", () => {
     ).toBeInTheDocument();
   });
 
-  it("filters the session by creator", () => {
+  it("filters the visual field by creator", async () => {
     render(<HomePage />);
+    await act(async () => undefined);
+    fireEvent.click(screen.getByRole("button", { name: "Filter" }));
     fireEvent.change(screen.getByLabelText("Creator"), {
       target: { value: "@quietframes" },
     });
-    expect(screen.getByText("1 visible media")).toBeInTheDocument();
+    expect(screen.getAllByTestId("archive-media-card")).toHaveLength(1);
+    expect(screen.getByText("1 media · 1 sources")).toBeInTheDocument();
+  });
+
+  it("shows the import-first landing when the library is empty", async () => {
+    testState.posts = [];
+    testState.queue = [];
+    render(<HomePage />);
+    await act(async () => undefined);
+
+    expect(screen.getByText("Import saved posts")).toBeInTheDocument();
     expect(
-      screen.getByText("Frame 1 of 1 · Resolved media"),
+      screen.getByRole("button", {
+        name: "Choose Instagram saved posts JSON file",
+      }),
     ).toBeInTheDocument();
   });
 });
