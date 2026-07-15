@@ -16,8 +16,6 @@ Store local library in IndexedDB
 Browse + search + date filters
         ↓
 Embedded photo viewer + slideshow
-        ↓
-Optional local backup / restore
 ```
 
 The product should remain one page unless a future requirement truly needs more.
@@ -77,17 +75,14 @@ The product should remain one page unless a future requirement truly needs more.
 - [x] Add a development-only 45-item fixture for large-list browser QA.
 - [x] Ignore likes, comments, and other Instagram social interactions.
 
-## Revision 4: GitHub Pages And Local Data Recovery
+## Revision 4: GitHub Pages And Browser Storage
 
 - [x] Add a GitHub Actions workflow for GitHub Pages.
 - [x] Build with a repository-specific Vite base path.
 - [x] Configure the browser router to use Vite's deployment base URL.
 - [x] Keep the production deployment completely static and backend-free.
-- [x] Expose app-backup download from the active one-page UI.
-- [x] Expose app-backup restore from both populated and empty states.
-- [x] Add UI coverage for backup download and restore.
 - [x] Explain browser-local privacy boundaries and shared-profile risk.
-- [x] Explain same-browser persistence and cross-device recovery.
+- [x] Explain same-browser persistence and JSON re-import on another device.
 - [x] Add setup instructions for maintainers and forks.
 - [x] Confirm the first live GitHub Pages deployment.
 
@@ -97,7 +92,6 @@ The product should remain one page unless a future requirement truly needs more.
 - [x] Remove obsolete category state, filters, icons, labels, and styles.
 - [x] Add an IndexedDB upgrade that removes previously stored unsupported records.
 - [x] Remove the legacy category field from retained photo records.
-- [x] Sanitize restored and exported backups to contain photo posts only.
 - [x] Update fixtures, tests, README, and this tracker for the photo-only product.
 
 ## Revision 6: Project Rename
@@ -107,6 +101,21 @@ The product should remain one page unless a future requirement truly needs more.
 - [x] Update the documented production URL and Pages build path.
 - [x] Keep README content entirely in English.
 - [x] Redeploy the renamed project through GitHub Pages.
+
+## Revision 7: Simplified Local Data Flow
+
+- [x] Remove app-generated data transfer controls from the active UI.
+- [x] Delete the related implementation, data types, and tests.
+- [x] Keep the imported library browser-local in IndexedDB with no backend database.
+- [x] Re-import the original Instagram JSON on another browser or device.
+- [x] Update README and this tracker to match the simplified workflow.
+
+## Revision 8: Repository URL Update
+
+- [x] Update repository links to `bradwang1995/Instagram-Viewer`.
+- [x] Update the production URL and Pages build path casing.
+- [x] Point the local Git remote at the renamed repository.
+- [x] Redeploy the accumulated changes through GitHub Pages.
 
 ## Current Active UI
 
@@ -121,8 +130,6 @@ The product should remain one page unless a future requirement truly needs more.
 - [x] Slideshow speed selector.
 - [x] Open original Instagram post.
 - [x] Clear local library from the same page.
-- [x] Download portable local backup.
-- [x] Restore portable local backup.
 
 ## Tests
 
@@ -135,13 +142,12 @@ The product should remain one page unless a future requirement truly needs more.
 - [x] One-page UI selection/navigation/loading smoke test
 - [x] Date range filtering test
 - [x] Embed URL and wrapping navigation tests
-- [x] One-page backup download/restore test
 
 ## Latest Verification
 
-- [x] `npm test` passes with 14 tests across 8 files, including photo-only backup cleanup and deterministic shuffle navigation.
+- [x] `npm test` passes with 12 tests across 7 files.
 - [x] `npm run build` passes.
-- [x] The Pages-specific build emits `/Instagram-viewer/` asset paths and router basename.
+- [x] The Pages-specific build emits `/Instagram-Viewer/` asset paths and router basename.
 - [x] Local dev server responds at `http://127.0.0.1:5173/`.
 - [x] `git status --ignored` shows `saved_posts.json` as ignored.
 - [x] Active router only serves the one-page `HomePage`.

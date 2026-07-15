@@ -1,14 +1,11 @@
-import { Download, FileJson, Save, Trash2, Upload } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Save, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { clearLocalDatabase } from "../db/postRepository";
 import { getSettings, updateSettings } from "../db/settingsRepository";
 import type { AppSettings } from "../db/schema";
 import { Button } from "../components/common/Button";
-import { downloadAppBackup } from "../features/backup/exportBackup";
-import { importAppBackupFile } from "../features/backup/importBackup";
 
 export function SettingsPage() {
-  const importRef = useRef<HTMLInputElement>(null);
   const [settings, setSettings] = useState<AppSettings | undefined>();
   const [message, setMessage] = useState("");
 
@@ -24,24 +21,6 @@ export function SettingsPage() {
     const nextSettings = await updateSettings(settings);
     setSettings(nextSettings);
     setMessage("Settings saved.");
-  }
-
-  async function exportBackup() {
-    await downloadAppBackup();
-    setMessage("Backup exported.");
-  }
-
-  async function importBackup(file: File | undefined) {
-    if (!file) {
-      return;
-    }
-
-    const backup = await importAppBackupFile(file);
-    setMessage(`Imported ${backup.posts.length.toLocaleString()} posts from backup.`);
-
-    if (importRef.current) {
-      importRef.current.value = "";
-    }
   }
 
   async function clearData() {
@@ -66,40 +45,12 @@ export function SettingsPage() {
           <h1>Settings</h1>
         </div>
         <p>
-          Manage browser storage, app backups, and default viewer behavior. Backup
-          files include photo references, local notes, tags, favorites, and import
-          history.
+          Manage browser storage and default viewer behavior. Imported photo
+          references stay only in this browser.
         </p>
       </section>
 
       <section className="settings-grid">
-        <div className="settings-panel">
-          <div className="section-heading">
-            <div>
-              <div className="eyebrow">backup</div>
-              <h2>Data</h2>
-            </div>
-            <FileJson size={20} aria-hidden="true" />
-          </div>
-          <div className="button-row">
-            <Button variant="primary" onClick={exportBackup}>
-              <Download size={16} aria-hidden="true" />
-              Export backup
-            </Button>
-            <Button variant="secondary" onClick={() => importRef.current?.click()}>
-              <Upload size={16} aria-hidden="true" />
-              Import backup
-            </Button>
-            <input
-              ref={importRef}
-              type="file"
-              accept="application/json,.json"
-              hidden
-              onChange={(event) => void importBackup(event.target.files?.[0])}
-            />
-          </div>
-        </div>
-
         <div className="settings-panel">
           <div className="section-heading">
             <div>

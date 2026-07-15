@@ -6,11 +6,7 @@ export type SavedPostStatus =
   | "deleted_or_removed"
   | "invalid_url";
 
-export type SavedPostSourceFormat =
-  | "json"
-  | "html"
-  | "manual"
-  | "app_backup";
+export type SavedPostSourceFormat = "json" | "html" | "manual";
 
 export type SavedPost = {
   id: string;
@@ -97,15 +93,6 @@ export type AppSettings = {
   preferredEmbedMode: "blockquote" | "oembed" | "link_only";
   createdAt: string;
   updatedAt: string;
-};
-
-export type AppBackup = {
-  version: 1;
-  exportedAt: string;
-  posts: SavedPost[];
-  collections: Collection[];
-  settings?: AppSettings;
-  importJobs: ImportJob[];
 };
 
 export const DEFAULT_SETTINGS: AppSettings = {

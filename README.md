@@ -4,9 +4,9 @@ A local-first viewer for Instagram Saved photos. Import `saved_posts.json`, brow
 
 This project is intentionally minimal. It is a personal saved-photo reference viewer, not an Instagram downloader, scraper, or full data-export explorer.
 
-Repository: [github.com/bradwang1995/Instagram-viewer](https://github.com/bradwang1995/Instagram-viewer)
+Repository: [github.com/bradwang1995/Instagram-Viewer](https://github.com/bradwang1995/Instagram-Viewer)
 
-Live app: [bradwang1995.github.io/Instagram-viewer](https://bradwang1995.github.io/Instagram-viewer/)
+Live app: [bradwang1995.github.io/Instagram-Viewer](https://bradwang1995.github.io/Instagram-Viewer/)
 
 ## Current Workflow
 
@@ -14,7 +14,6 @@ Live app: [bradwang1995.github.io/Instagram-viewer](https://bradwang1995.github.
 2. Open the hosted app or run it locally.
 3. Import `saved_posts.json`.
 4. Browse the library or play the slideshow.
-5. Download an app backup before clearing browser data or moving devices.
 
 The app does not ask for Instagram credentials and does not upload your JSON file to GitHub, GitHub Pages, or an application server.
 
@@ -32,7 +31,6 @@ The app does not ask for Instagram credentials and does not upload your JSON fil
 - Keeps the selected viewer visible when a library item is chosen.
 - Adapts to desktop, tablet, and mobile widths without horizontal scrolling.
 - Opens the original Instagram post when needed.
-- Downloads and restores portable local backups.
 - Ignores personal export JSON files by default.
 
 ## What It Avoids
@@ -62,19 +60,13 @@ The local database contains canonical Instagram photo-post URLs, shortcodes, tim
 
 Instagram previews are loaded in iframes from `instagram.com`. Opening a preview sends that post URL and normal browser request information to Instagram, just as opening an Instagram embed normally would. The export JSON itself is not sent with that request.
 
-## Returning Later Or Moving Devices
+## Browser Storage
 
-On the same browser profile and the same site origin, the gallery is loaded automatically from IndexedDB on future visits. There is no login because no server owns a copy of the library.
+On the same browser profile and the same site origin, the gallery loads automatically from IndexedDB on future visits. There is no login because no server owns a copy of the library.
 
-For another browser or device:
+If you use another browser or device, clear site data, or move the app to another origin, select the original Instagram `saved_posts.json` again. The app intentionally has no cross-device transfer or recovery workflow.
 
-1. Click **Download backup** in the current gallery.
-2. Move the downloaded backup file privately to the other device.
-3. Open the app there and click **Restore backup**.
-
-The backup is a readable JSON file and contains your saved-photo links. It is not encrypted, so treat it like the original Instagram export and do not commit or share it. This manual backup flow is also the recovery path before clearing browser data or moving the app to a custom domain.
-
-Automatic cross-device sync would require user authentication, access controls, secure server storage, deletion controls, and a documented privacy policy. That is intentionally outside the current local-first MVP.
+Cross-device sync would require user authentication, access controls, secure server storage, deletion controls, and a documented privacy policy. That is intentionally outside the current local-first viewer.
 
 ## Preview Availability
 
@@ -131,7 +123,7 @@ To inspect the exact Pages build locally:
 npm ci
 npm test
 npm run lint
-npx --no-install vite build --base="/Instagram-viewer/"
+npx --no-install vite build --base="/Instagram-Viewer/"
 ```
 
 The generated static site is in `dist/`. The checked-in workflow is the recommended deployment path because Vite requires a build step.
@@ -169,4 +161,4 @@ The ZIP importer and some richer components still exist in the codebase as reusa
 
 ## Current Status
 
-The current MVP is a responsive one-page photo viewer with reliable selection, embedded photos, filters, infinite scrolling, slideshow controls, portable backups, and automated GitHub Pages deployment. See [PROGRESS.md](./PROGRESS.md) for the internal tracker.
+The current MVP is a responsive one-page photo viewer with reliable selection, embedded photos, filters, infinite scrolling, slideshow controls, browser-local storage, and automated GitHub Pages deployment. See [PROGRESS.md](./PROGRESS.md) for the internal tracker.
