@@ -8,6 +8,42 @@ export type SavedPostStatus =
 
 export type SavedPostSourceFormat = "json" | "html" | "manual";
 
+export type MediaSourceKind = "local" | "remote" | "embed" | "demo";
+
+export type MediaItem = {
+  id: string;
+  sourcePostId: string;
+  sourceIndex: number;
+  type: "image" | "video";
+  sourceKind: MediaSourceKind;
+  creatorHandle?: string;
+  caption?: string;
+  previewUrl?: string;
+  assetUrl?: string;
+  width?: number;
+  height?: number;
+  durationMs?: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type MediaPreference = {
+  mediaId: string;
+  visibility: "visible" | "hidden";
+  rating: -1 | 0 | 1;
+  hiddenAt?: string;
+  localTags: string[];
+  updatedAt: string;
+};
+
+export type TransitionPreset =
+  | "crossfade"
+  | "directional-wipe"
+  | "depth-zoom"
+  | "film-burn"
+  | "rgb-split"
+  | "ken-burns";
+
 export type SavedPost = {
   id: string;
   url: string;
@@ -35,11 +71,7 @@ export type SavedPost = {
 };
 
 export type ImportJobStatus =
-  | "pending"
-  | "parsing"
-  | "completed"
-  | "failed"
-  | "cancelled";
+  "pending" | "parsing" | "completed" | "failed" | "cancelled";
 
 export type ImportWarningCode =
   | "ZIP_FILE_SKIPPED"
@@ -91,6 +123,9 @@ export type AppSettings = {
   slideshowShowMetadata: boolean;
   defaultView: "grid" | "slideshow";
   preferredEmbedMode: "blockquote" | "oembed" | "link_only";
+  slideshowTransitionDurationMs: number;
+  slideshowTransitionPreset: TransitionPreset;
+  slideshowLoopMode: "off" | "session" | "source-post";
   createdAt: string;
   updatedAt: string;
 };
@@ -103,6 +138,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
   slideshowShowMetadata: true,
   defaultView: "grid",
   preferredEmbedMode: "blockquote",
+  slideshowTransitionDurationMs: 700,
+  slideshowTransitionPreset: "crossfade",
+  slideshowLoopMode: "session",
   createdAt: new Date(0).toISOString(),
   updatedAt: new Date(0).toISOString(),
 };

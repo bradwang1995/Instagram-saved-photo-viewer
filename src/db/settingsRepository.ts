@@ -5,7 +5,7 @@ export async function getSettings(): Promise<AppSettings> {
   const existing = await db.settings.get("app_settings");
 
   if (existing) {
-    return existing;
+    return { ...DEFAULT_SETTINGS, ...existing };
   }
 
   const now = new Date().toISOString();

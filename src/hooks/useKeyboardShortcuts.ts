@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 
-export type KeyboardShortcutMap = Record<string, (event: KeyboardEvent) => void>;
+export type KeyboardShortcutMap = Record<
+  string,
+  (event: KeyboardEvent) => void
+>;
 
 export function useKeyboardShortcuts(
   shortcuts: KeyboardShortcutMap,
@@ -15,6 +18,7 @@ export function useKeyboardShortcuts(
       const target = event.target as HTMLElement | null;
       const isTyping =
         target?.tagName === "INPUT" ||
+        target?.tagName === "SELECT" ||
         target?.tagName === "TEXTAREA" ||
         target?.isContentEditable;
 

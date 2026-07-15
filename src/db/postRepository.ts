@@ -1,5 +1,5 @@
 import { mergeSavedPost } from "../features/import/mergeSavedPost";
-import { db, notifyDbChanged } from "./db";
+import { createFallbackMediaItem, db, notifyDbChanged } from "./db";
 import type { Collection, SavedPost } from "./schema";
 
 export type UpsertResult = {
@@ -46,10 +46,17 @@ export async function bulkUpsertImportedPosts(
     return incomingPost;
   });
 
-  await db.transaction("rw", db.posts, db.collections, async () => {
-    await db.posts.bulkPut(mergedPosts);
-    await upsertCollectionsForPosts(mergedPosts);
-  });
+  await db.transaction(
+    "rw",
+    db.posts,
+    db.collections,
+    db.mediaItems,
+    async () => {
+      await db.posts.bulkPut(mergedPosts);
+      await upsertCollectionsForPosts(mergedPosts);
+      await ensureMediaItemsForPosts(mergedPosts);
+    },
+  );
 
   notifyDbChanged();
   return { posts: mergedPosts, newCount, updatedCount };
@@ -58,7 +65,10 @@ export async function bulkUpsertImportedPosts(
 export async function updatePost(
   id: string,
   patch: Partial<
-    Pick<SavedPost, "localNote" | "localTags" | "favorite" | "hidden" | "status">
+    Pick<
+      SavedPost,
+      "localNote" | "localTags" | "favorite" | "hidden" | "status"
+    >
   >,
 ): Promise<SavedPost | undefined> {
   const existing = await db.posts.get(id);
@@ -82,20 +92,39 @@ export async function updatePost(
 export async function clearLocalDatabase(): Promise<void> {
   await db.transaction(
     "rw",
-    db.posts,
-    db.collections,
-    db.importJobs,
-    db.settings,
+    [
+      db.posts,
+      db.collections,
+      db.importJobs,
+      db.settings,
+      db.mediaItems,
+      db.mediaPreferences,
+    ],
     async () => {
       await Promise.all([
         db.posts.clear(),
         db.collections.clear(),
         db.importJobs.clear(),
         db.settings.clear(),
+        db.mediaItems.clear(),
+        db.mediaPreferences.clear(),
       ]);
     },
   );
   notifyDbChanged();
+}
+
+async function ensureMediaItemsForPosts(posts: SavedPost[]): Promise<void> {
+  for (const post of posts) {
+    const existingCount = await db.mediaItems
+      .where("sourcePostId")
+      .equals(post.id)
+      .count();
+
+    if (existingCount === 0) {
+      await db.mediaItems.put(createFallbackMediaItem(post));
+    }
+  }
 }
 
 async function upsertCollectionsForPosts(posts: SavedPost[]): Promise<void> {

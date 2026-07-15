@@ -4,9 +4,7 @@ import type { SavedPost } from "../db/schema";
 import { createDemoPosts } from "../dev/demoPosts";
 
 export function usePosts() {
-  const isDemo =
-    import.meta.env.DEV &&
-    new URLSearchParams(window.location.search).get("demo") === "1";
+  const isDemo = isDemoMode();
   const [posts, setPosts] = useState<SavedPost[]>(() =>
     isDemo ? createDemoPosts() : [],
   );
@@ -26,7 +24,9 @@ export function usePosts() {
       setPosts(nextPosts);
     } catch (caughtError) {
       setError(
-        caughtError instanceof Error ? caughtError.message : "Could not load posts.",
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Could not load posts.",
       );
     } finally {
       setIsLoading(false);
@@ -44,4 +44,8 @@ export function usePosts() {
   }, [refresh]);
 
   return { posts, isLoading, error, refresh };
+}
+
+export function isDemoMode(): boolean {
+  return new URLSearchParams(window.location.search).get("demo") === "1";
 }
