@@ -78,7 +78,7 @@ export const db = new AppDatabase();
 
 export function notifyDbChanged() {
   if (typeof window !== "undefined") {
-    window.dispatchEvent(new Event("instagram-saved-viewer:db-changed"));
+    window.dispatchEvent(new Event("instagram-viewer:db-changed"));
   }
 }
 

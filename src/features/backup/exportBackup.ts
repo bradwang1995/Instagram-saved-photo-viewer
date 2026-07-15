@@ -30,7 +30,7 @@ export async function downloadAppBackup(): Promise<void> {
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 
   anchor.href = url;
-  anchor.download = `instagram-saved-viewer-backup-${timestamp}.json`;
+  anchor.download = `instagram-viewer-backup-${timestamp}.json`;
   anchor.click();
   URL.revokeObjectURL(url);
 }

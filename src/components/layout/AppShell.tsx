@@ -10,7 +10,7 @@ export function AppShell({ children }: PropsWithChildren) {
           <span className="brand-mark">
             <Camera size={20} aria-hidden="true" />
           </span>
-          <span>Ins 图片展</span>
+          <span>Instagram Viewer</span>
         </NavLink>
       </header>
       <main className="app-main">{children}</main>

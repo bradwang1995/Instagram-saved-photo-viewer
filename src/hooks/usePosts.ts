@@ -36,10 +36,10 @@ export function usePosts() {
   useEffect(() => {
     void refresh();
 
-    window.addEventListener("instagram-saved-viewer:db-changed", refresh);
+    window.addEventListener("instagram-viewer:db-changed", refresh);
 
     return () => {
-      window.removeEventListener("instagram-saved-viewer:db-changed", refresh);
+      window.removeEventListener("instagram-viewer:db-changed", refresh);
     };
   }, [refresh]);
 

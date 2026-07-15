@@ -1,10 +1,10 @@
-# PROGRESS
+# Instagram Viewer Progress
 
-Internal implementation tracker for `Ins 图片展`.
+Internal implementation tracker for `Instagram Viewer`.
 
 ## Current Product Direction
 
-Build a very small local-first Instagram Saved photo exhibition:
+Build a very small local-first Instagram Saved photo viewer:
 
 ```text
 Import saved_posts.json
@@ -100,6 +100,14 @@ The product should remain one page unless a future requirement truly needs more.
 - [x] Sanitize restored and exported backups to contain photo posts only.
 - [x] Update fixtures, tests, README, and this tracker for the photo-only product.
 
+## Revision 6: Project Rename
+
+- [x] Rename the product to `Instagram Viewer` across the UI and project metadata.
+- [x] Update documentation to the renamed GitHub repository.
+- [x] Update the documented production URL and Pages build path.
+- [x] Keep README content entirely in English.
+- [x] Redeploy the renamed project through GitHub Pages.
+
 ## Current Active UI
 
 - [x] Import JSON button.
@@ -133,7 +141,7 @@ The product should remain one page unless a future requirement truly needs more.
 
 - [x] `npm test` passes with 14 tests across 8 files, including photo-only backup cleanup and deterministic shuffle navigation.
 - [x] `npm run build` passes.
-- [x] The Pages-specific build emits `/Instagram-saved-photo-viewer/` asset paths and router basename.
+- [x] The Pages-specific build emits `/Instagram-viewer/` asset paths and router basename.
 - [x] Local dev server responds at `http://127.0.0.1:5173/`.
 - [x] `git status --ignored` shows `saved_posts.json` as ignored.
 - [x] Active router only serves the one-page `HomePage`.

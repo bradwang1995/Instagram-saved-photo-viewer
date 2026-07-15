@@ -1,10 +1,12 @@
-# Ins 图片展
+# Instagram Viewer
 
 A local-first viewer for Instagram Saved photos. Import `saved_posts.json`, browse a large saved-photo library, and run a photo slideshow from one responsive page.
 
 This project is intentionally minimal. It is a personal saved-photo reference viewer, not an Instagram downloader, scraper, or full data-export explorer.
 
-Live app: [bradwang1995.github.io/Instagram-saved-photo-viewer](https://bradwang1995.github.io/Instagram-saved-photo-viewer/)
+Repository: [github.com/bradwang1995/Instagram-viewer](https://github.com/bradwang1995/Instagram-viewer)
+
+Live app: [bradwang1995.github.io/Instagram-viewer](https://bradwang1995.github.io/Instagram-viewer/)
 
 ## Current Workflow
 
@@ -129,7 +131,7 @@ To inspect the exact Pages build locally:
 npm ci
 npm test
 npm run lint
-npx --no-install vite build --base="/Instagram-saved-photo-viewer/"
+npx --no-install vite build --base="/Instagram-viewer/"
 ```
 
 The generated static site is in `dist/`. The checked-in workflow is the recommended deployment path because Vite requires a build step.

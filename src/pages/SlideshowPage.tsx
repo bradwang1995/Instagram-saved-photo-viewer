@@ -29,7 +29,7 @@ export function SlideshowPage() {
   const sessionPostIds = useMemo(() => {
     try {
       const raw = sessionStorage.getItem(
-        "instagram-saved-viewer:slideshow-post-ids",
+        "instagram-viewer:slideshow-post-ids",
       );
       return raw ? (JSON.parse(raw) as string[]) : [];
     } catch {

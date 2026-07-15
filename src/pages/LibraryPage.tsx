@@ -77,7 +77,7 @@ export function LibraryPage() {
 
   function startSlideshow() {
     sessionStorage.setItem(
-      "instagram-saved-viewer:slideshow-post-ids",
+      "instagram-viewer:slideshow-post-ids",
       JSON.stringify(visiblePosts.map((post) => post.id)),
     );
     navigate("/slideshow");
