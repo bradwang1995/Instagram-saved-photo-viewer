@@ -71,11 +71,31 @@ export function ArchiveSlideshow({
     >
       <header className="slideshow-header">
         <div className="slideshow-header-actions">
-          <button type="button" onClick={onHide} aria-label="Hide this media">
-            <EyeOff size={17} aria-hidden="true" />
+          <button
+            className="viewer-control"
+            type="button"
+            onClick={onOpenSettings}
+          >
+            <Settings2 size={18} aria-hidden="true" />
+            <span>Settings</span>
           </button>
-          <button type="button" onClick={onClose} aria-label="Close slideshow">
+          <button
+            className="viewer-control"
+            type="button"
+            onClick={onHide}
+            aria-label="Hide this media"
+          >
+            <EyeOff size={17} aria-hidden="true" />
+            <span>Hide</span>
+          </button>
+          <button
+            className="viewer-control"
+            type="button"
+            onClick={onClose}
+            aria-label="Close slideshow"
+          >
             <X size={20} aria-hidden="true" />
+            <span>Close</span>
           </button>
         </div>
       </header>
@@ -133,14 +153,16 @@ export function ArchiveSlideshow({
         </div>
         <div className="slideshow-transport">
           <button
+            className="viewer-control"
             type="button"
             onClick={onPrevious}
             aria-label={isInteractiveEmbed ? "Previous post" : "Previous photo"}
           >
             <ChevronLeft size={22} aria-hidden="true" />
+            <span>Previous</span>
           </button>
           <button
-            className="slideshow-play"
+            className="viewer-control slideshow-play"
             type="button"
             onClick={onTogglePlaying}
             aria-label={isPlaying ? "Pause slideshow" : "Play slideshow"}
@@ -150,23 +172,18 @@ export function ArchiveSlideshow({
             ) : (
               <Play size={19} fill="currentColor" aria-hidden="true" />
             )}
+            <span>{isPlaying ? "Pause" : "Play"}</span>
           </button>
           <button
+            className="viewer-control"
             type="button"
             onClick={onNext}
             aria-label={isInteractiveEmbed ? "Next post" : "Next photo"}
           >
+            <span>Next</span>
             <ChevronRight size={22} aria-hidden="true" />
           </button>
         </div>
-        <button
-          className="slideshow-settings"
-          type="button"
-          onClick={onOpenSettings}
-        >
-          <Settings2 size={16} aria-hidden="true" />{" "}
-          {transitionPreset.replace("-", " ")}
-        </button>
       </footer>
     </motion.section>
   );

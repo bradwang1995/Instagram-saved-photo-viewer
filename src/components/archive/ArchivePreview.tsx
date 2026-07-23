@@ -322,7 +322,7 @@ export function ArchivePreview({
         </div>
         <div className="archive-view-tabs" aria-label="Photo layout">
           <button
-            className={viewMode === "ribbon" ? "is-active" : ""}
+            className={`viewer-control${viewMode === "ribbon" ? " is-active" : ""}`}
             type="button"
             aria-pressed={viewMode === "ribbon"}
             onClick={() => onViewModeChange("ribbon")}
@@ -330,7 +330,7 @@ export function ArchivePreview({
             <MoveHorizontal size={22} aria-hidden="true" /> Horizontal View
           </button>
           <button
-            className={viewMode === "grid" ? "is-active" : ""}
+            className={`viewer-control${viewMode === "grid" ? " is-active" : ""}`}
             type="button"
             aria-pressed={viewMode === "grid"}
             onClick={() => onViewModeChange("grid")}
@@ -339,7 +339,7 @@ export function ArchivePreview({
           </button>
         </div>
         <button
-          className="archive-import-link"
+          className="viewer-control archive-import-link"
           type="button"
           onClick={onImport}
         >
@@ -398,13 +398,17 @@ export function ArchivePreview({
       >
         <div className="dock-actions">
           <button
-            className={hasFilters ? "is-active" : ""}
+            className={`viewer-control${hasFilters ? " is-active" : ""}`}
             type="button"
             onClick={onOpenFilters}
           >
             <Search size={18} aria-hidden="true" /> Filter
           </button>
-          <button type="button" onClick={onOpenSettings}>
+          <button
+            className="viewer-control"
+            type="button"
+            onClick={onOpenSettings}
+          >
             {hiddenCount ? (
               <EyeOff size={18} aria-hidden="true" />
             ) : (
@@ -413,7 +417,7 @@ export function ArchivePreview({
             Settings
           </button>
           <button
-            className="dock-play"
+            className="viewer-control dock-play"
             type="button"
             disabled={items.length === 0}
             onClick={onStartSlideshow}

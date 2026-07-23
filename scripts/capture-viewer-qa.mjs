@@ -42,6 +42,10 @@ try {
     await captureManifestImport({
       browser,
       screenshot: path.join(artifactDir, "audit-04-manifest-grid.png"),
+      slideshowScreenshot: path.join(
+        artifactDir,
+        "audit-05-slideshow-controls.png",
+      ),
     }),
   );
   results.push(await verifySilentSourceFiltering({ browser }));
@@ -198,7 +202,11 @@ async function verifySilentSourceFiltering({ browser }) {
   }
 }
 
-async function captureManifestImport({ browser, screenshot }) {
+async function captureManifestImport({
+  browser,
+  screenshot,
+  slideshowScreenshot,
+}) {
   const context = await browser.newContext({
     viewport: { width: 1920, height: 1080 },
   });
@@ -288,24 +296,76 @@ async function captureManifestImport({ browser, screenshot }) {
 
     await page.locator(".archive-preview").screenshot({ path: screenshot });
     await page.getByRole("button", { name: "Slideshow" }).click();
+    await page.waitForTimeout(750);
+    await page.locator(".archive-slideshow").screenshot({
+      path: slideshowScreenshot,
+    });
+    const slideshowControlEvidence = await page.evaluate(() => {
+      const controls = Array.from(
+        document.querySelectorAll(".archive-slideshow button.viewer-control"),
+      );
+      const transport = Array.from(
+        document.querySelectorAll(".slideshow-transport button.viewer-control"),
+      );
+      const unique = (values) => [...new Set(values)];
+      return {
+        labels: transport.map((control) => control.textContent?.trim()),
+        fontFamilies: unique(
+          controls.map((control) => getComputedStyle(control).fontFamily),
+        ),
+        fontSizes: unique(
+          transport.map((control) => getComputedStyle(control).fontSize),
+        ),
+        heights: unique(
+          transport.map((control) =>
+            Math.round(control.getBoundingClientRect().height),
+          ),
+        ),
+        borderRadii: unique(
+          transport.map((control) => getComputedStyle(control).borderRadius),
+        ),
+        textTransforms: unique(
+          controls.map((control) => getComputedStyle(control).textTransform),
+        ),
+      };
+    });
+    if (
+      JSON.stringify(slideshowControlEvidence.labels) !==
+        JSON.stringify(["Previous", "Pause", "Next"]) ||
+      slideshowControlEvidence.fontFamilies.length !== 1 ||
+      !slideshowControlEvidence.fontFamilies[0]?.startsWith("Lobster") ||
+      slideshowControlEvidence.fontSizes.length !== 1 ||
+      slideshowControlEvidence.heights.length !== 1 ||
+      slideshowControlEvidence.borderRadii.length !== 1 ||
+      JSON.stringify(slideshowControlEvidence.textTransforms) !==
+        JSON.stringify(["none"])
+    ) {
+      throw new Error(
+        `slideshow controls are not visually unified: ${JSON.stringify(slideshowControlEvidence)}`,
+      );
+    }
     await page.getByRole("button", { name: "Next photo" }).click();
     await page.waitForFunction(
       () =>
-        document.querySelector(".slideshow-progress span")?.textContent?.trim() ===
-        "02 / 03",
+        document
+          .querySelector(".slideshow-progress span")
+          ?.textContent?.trim() === "02 / 03",
     );
     await page.keyboard.press("ArrowRight");
     await page.waitForFunction(
       () =>
-        document.querySelector(".slideshow-progress span")?.textContent?.trim() ===
-        "03 / 03",
+        document
+          .querySelector(".slideshow-progress span")
+          ?.textContent?.trim() === "03 / 03",
     );
     const slideshowEvidence = await page.evaluate(() => {
       const image = document.querySelector(".slideshow-frame > img");
       if (!(image instanceof HTMLImageElement)) return undefined;
       const rect = image.getBoundingClientRect();
       return {
-        position: document.querySelector(".slideshow-progress span")?.textContent?.trim(),
+        position: document
+          .querySelector(".slideshow-progress span")
+          ?.textContent?.trim(),
         interval: Array.from(
           document.querySelectorAll(".slideshow-progress span"),
         ).at(-1)?.textContent,
@@ -329,8 +389,13 @@ async function captureManifestImport({ browser, screenshot }) {
     return {
       name: "resolved-manifest-grid",
       viewport: { width: 1920, height: 1080 },
-      evidence: { ...evidence, slideshow: slideshowEvidence },
+      evidence: {
+        ...evidence,
+        slideshow: slideshowEvidence,
+        slideshowControls: slideshowControlEvidence,
+      },
       screenshot,
+      slideshowScreenshot,
     };
   } finally {
     await context.close();
@@ -425,8 +490,45 @@ async function captureState({
           Number(computed.opacity) > 0
         );
       };
+      const viewerControls = Array.from(
+        document.querySelectorAll("button.viewer-control"),
+      ).filter(isVisible);
+      const textElements = [
+        document.body,
+        ...Array.from(document.body.querySelectorAll("*")),
+      ].filter(
+        (element) =>
+          isVisible(element) &&
+          Array.from(element.childNodes).some(
+            (node) =>
+              node.nodeType === Node.TEXT_NODE &&
+              Boolean(node.textContent?.trim()),
+          ),
+      );
+      const unique = (values) => [...new Set(values)];
       return {
         rootFontSize: getComputedStyle(document.documentElement).fontSize,
+        fontFamilies: unique(
+          textElements.map((element) => getComputedStyle(element).fontFamily),
+        ),
+        controlFontSizes: unique(
+          viewerControls.map((control) => getComputedStyle(control).fontSize),
+        ),
+        controlHeights: unique(
+          viewerControls.map((control) =>
+            Math.round(control.getBoundingClientRect().height),
+          ),
+        ),
+        controlBorderRadii: unique(
+          viewerControls.map(
+            (control) => getComputedStyle(control).borderRadius,
+          ),
+        ),
+        controlTextTransforms: unique(
+          viewerControls.map(
+            (control) => getComputedStyle(control).textTransform,
+          ),
+        ),
         userSelect: getComputedStyle(document.body).userSelect,
         scrollbarWidth: style.scrollbarWidth,
         scrollSnapType: style.scrollSnapType,
@@ -463,6 +565,24 @@ async function captureState({
     if (initial.rootFontSize !== "24px") {
       throw new Error(
         `${name}: expected 24px root font, got ${initial.rootFontSize}`,
+      );
+    }
+    if (
+      initial.fontFamilies.length !== 1 ||
+      !initial.fontFamilies[0]?.startsWith("Lobster")
+    ) {
+      throw new Error(
+        `${name}: viewer text does not use one Lobster font family: ${JSON.stringify(initial.fontFamilies)}`,
+      );
+    }
+    if (
+      initial.controlFontSizes.length !== 1 ||
+      initial.controlHeights.length !== 1 ||
+      initial.controlBorderRadii.length !== 1 ||
+      JSON.stringify(initial.controlTextTransforms) !== JSON.stringify(["none"])
+    ) {
+      throw new Error(
+        `${name}: viewer controls are not visually unified: ${JSON.stringify({ fontSizes: initial.controlFontSizes, heights: initial.controlHeights, borderRadii: initial.controlBorderRadii, textTransforms: initial.controlTextTransforms })}`,
       );
     }
     if (initial.scrollbarWidth !== "none") {

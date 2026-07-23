@@ -50,6 +50,16 @@ Approved product principles:
 - Keep local-first privacy as the default and make every network/cache boundary explicit.
 - Do not implement carousel extraction, thumbnails, or GPU media transitions by scraping Instagram or reading a cross-origin iframe.
 
+## Revision 23: Unified Typography And Recognizable Controls
+
+- [x] Self-host the Google Fonts Lobster typeface and its OFL license so production typography does not depend on a third-party font request.
+- [x] Use Lobster as the single family for the title, tabs, buttons, sheets, form controls, labels, and status text; remove the previous system-font/Bodoni split.
+- [x] Remove forced uppercase styling and hard-coded all-caps display copy, including the Landing wordmark, Slideshow action, and sheet labels, while preserving intentional acronym spelling such as JSON and RGB.
+- [x] Give view tabs, Import, Filter, Settings, Slideshow, sheet actions, and slideshow controls one shared rounded dark-button language with a gradient edge and clear hover/focus states.
+- [x] Make Previous, Play/Pause, and Next visible text controls instead of differently sized icon-only buttons; keep their font size, height, radius, and base styling identical.
+- [x] Browser-verify one computed font family and one control size per viewport: desktop `19.2px / 52px / 16px`, mobile `16.32px / 46px / 14px`, with `text-transform: none` throughout.
+- [x] Re-audit the four-task requirements document and retain passing coverage for URL history, global chrome/cursor, dense bounded media loading, rounded edges, five-second slideshow timing, known-child navigation, and interactive compatibility iframes.
+
 ## Revision 22: Interactive Five-Second Slideshow
 
 - [x] Confirm the exact default dwell interval remains `5000ms` while preserving locally persisted user-configured values.

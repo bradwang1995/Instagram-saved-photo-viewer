@@ -98,11 +98,21 @@ describe("Photo archive preview", () => {
     expect(
       screen.getByRole("button", { name: /Grid View/ }),
     ).toBeInTheDocument();
-    expect(screen.queryByText(/local-first photo viewer/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/local-first photo viewer/i),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("Instagram Viewer").closest("a")).toBeNull();
     expect(
       document.querySelector(".archive-header .archive-view-tabs"),
     ).toBeInTheDocument();
+    [
+      screen.getByRole("button", { name: /Horizontal View/ }),
+      screen.getByRole("button", { name: /Grid View/ }),
+      screen.getByRole("button", { name: "Import JSON" }),
+      screen.getByRole("button", { name: "Filter" }),
+      screen.getByRole("button", { name: "Settings" }),
+      screen.getByRole("button", { name: "Slideshow" }),
+    ].forEach((control) => expect(control).toHaveClass("viewer-control"));
     expect(
       screen.queryByRole("button", { name: /reload|refresh/i }),
     ).not.toBeInTheDocument();
@@ -183,6 +193,11 @@ describe("Photo archive preview", () => {
     await act(async () => undefined);
 
     expect(screen.getByText("Import saved posts")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Instagram Viewer" }),
+    ).toHaveTextContent("InstagramViewer");
+    expect(screen.queryByText("INSTAGRAM")).not.toBeInTheDocument();
+    expect(screen.queryByText("VIEWER")).not.toBeInTheDocument();
     expect(
       screen.getByRole("button", {
         name: "Choose Instagram saved posts JSON file",
@@ -267,6 +282,20 @@ describe("Photo archive preview", () => {
     expect(slideshow).toBeInTheDocument();
     expect(within(slideshow).getByText("5s")).toBeInTheDocument();
     expect(DEFAULT_SETTINGS.slideshowIntervalMs).toBe(5_000);
+    const slideshowControls = [
+      within(slideshow).getByRole("button", { name: "Settings" }),
+      within(slideshow).getByRole("button", { name: "Hide this media" }),
+      within(slideshow).getByRole("button", { name: "Close slideshow" }),
+      within(slideshow).getByRole("button", { name: "Previous photo" }),
+      within(slideshow).getByRole("button", { name: "Pause slideshow" }),
+      within(slideshow).getByRole("button", { name: "Next photo" }),
+    ];
+    slideshowControls.forEach((control) =>
+      expect(control).toHaveClass("viewer-control"),
+    );
+    expect(within(slideshow).getByText("Previous")).toBeInTheDocument();
+    expect(within(slideshow).getByText("Pause")).toBeInTheDocument();
+    expect(within(slideshow).getByText("Next")).toBeInTheDocument();
     expect(
       within(slideshow).getByRole("img", {
         name: "@north.archive frame 1 of 2",
@@ -312,14 +341,22 @@ describe("Photo archive preview", () => {
     const frame = await screen.findByTitle("Instagram preview INTERACTIVE");
     expect(frame).toHaveAttribute("tabindex", "0");
     expect(frame).not.toHaveAttribute("scrolling", "no");
-    expect(screen.getByRole("button", { name: "Pause slideshow" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Pause slideshow" }),
+    ).toBeInTheDocument();
 
     fireEvent.pointerEnter(frame);
-    expect(screen.getByRole("button", { name: "Play slideshow" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Next post" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Play slideshow" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Next post" }),
+    ).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: "ArrowRight" });
-    expect(screen.getByTitle("Instagram preview INTERACTIVE")).toBeInTheDocument();
+    expect(
+      screen.getByTitle("Instagram preview INTERACTIVE"),
+    ).toBeInTheDocument();
   });
 
   it("silently removes posts rejected by the official embed check", async () => {

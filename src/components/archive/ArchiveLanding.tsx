@@ -87,8 +87,8 @@ export function ArchiveLanding({
       </header>
 
       <h1 className="landing-wordmark" aria-label="Instagram Viewer">
-        <span>INSTAGRAM</span>
-        <span>VIEWER</span>
+        <span>Instagram</span>
+        <span>Viewer</span>
       </h1>
 
       <motion.button

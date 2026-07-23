@@ -78,7 +78,11 @@ export function ArchiveFilterSheet({
             ))}
           </select>
         </label>
-        <button className="archive-sheet-reset" type="button" onClick={onClear}>
+        <button
+          className="viewer-control archive-sheet-reset"
+          type="button"
+          onClick={onClear}
+        >
           <RotateCcw size={15} aria-hidden="true" /> Clear filters
         </button>
       </div>
@@ -200,7 +204,11 @@ export function ArchiveSettingsSheet({
           <span>Hidden media</span>
           <strong>{hiddenItems.length}</strong>
           {hiddenItems.length ? (
-            <button type="button" onClick={onRestoreAll}>
+            <button
+              className="viewer-control"
+              type="button"
+              onClick={onRestoreAll}
+            >
               Restore all
             </button>
           ) : null}
@@ -226,7 +234,11 @@ export function ArchiveSettingsSheet({
                 </strong>
                 <small>Frame {item.media.sourceIndex + 1}</small>
               </span>
-              <button type="button" onClick={() => onRestore(item.media.id)}>
+              <button
+                className="viewer-control"
+                type="button"
+                onClick={() => onRestore(item.media.id)}
+              >
                 Restore
               </button>
             </div>
@@ -274,7 +286,7 @@ function ArchiveSheet({
             transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
           >
             <button
-              className="archive-sheet-close"
+              className="viewer-control archive-sheet-close"
               type="button"
               aria-label={`Close ${label}`}
               onClick={onClose}

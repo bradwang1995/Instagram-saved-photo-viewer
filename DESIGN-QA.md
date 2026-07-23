@@ -7,14 +7,14 @@
 - Same-viewport comparison: `artifacts/photoyoshi-mobile-comparison.png`
 - Interaction evidence: `artifacts/photoyoshi-archive-desktop-scroll.png`, `artifacts/photoyoshi-archive-index.png`, `artifacts/photoyoshi-archive-slideshow.png`, and `artifacts/photoyoshi-archive-slideshow-mobile.png`
 - Viewports: `1280 × 720` desktop and `390 × 844` mobile
-- Current refinement evidence: `artifacts/audit-01-horizontal.png`, `artifacts/audit-02-grid.png`, `artifacts/audit-03-mobile-grid.png`, and `artifacts/audit-04-manifest-grid.png`
+- Current refinement evidence: `artifacts/audit-01-horizontal.png`, `artifacts/audit-02-grid.png`, `artifacts/audit-03-mobile-grid.png`, `artifacts/audit-04-manifest-grid.png`, and `artifacts/audit-05-slideshow-controls.png`
 - Current states: bundled non-personal direct-image demo in desktop Horizontal View, desktop Grid View, and `390 × 844` mobile Grid View; real saved-post JSON in a network-controlled browser profile
 
 ## Outcome
 
 The previous white Instagram embed and text-library split have been replaced by a full-viewport photo field. The active product name is `Instagram Viewer`. Direct source frames, when available to internal fixtures, are presented as independent media items; ordinary `saved_posts.json` imports use a bounded Instagram compatibility preview per post. Both use a virtual Horizontal View or four-column desktop Grid View. Per-card metadata, counters, source actions, and curation controls no longer compete with the photos.
 
-The visual language follows the supplied PhotoYoshi reference: oversized clipped editorial typography, a deep black/plum canvas, centered image objects, sparse metadata, sharp rectangular surfaces, and motion driven by scrolling and pointer position. The implementation adapts that composition to the product workflow rather than copying PhotoYoshi content or assets.
+The visual language follows the supplied PhotoYoshi reference: oversized expressive typography, a deep black/plum canvas, centered image objects, sparse metadata, rounded dark-edged surfaces, and motion driven by scrolling and pointer position. The implementation adapts that composition to the product workflow rather than copying PhotoYoshi content or assets.
 
 ## Combined Comparison Pass
 
@@ -22,11 +22,11 @@ The visual language follows the supplied PhotoYoshi reference: oversized clipped
 
 ## Required Fidelity Surfaces
 
-- Typography: passed. Functional text now uses a 150% root scale; the preview no longer spends image space on an oversized archive watermark or compact per-card metadata.
-- Layout and spacing: passed in current browser captures. Desktop Horizontal media remains approximately 70–80% of the viewport. Desktop Grid shows one four-card row while preloading exactly the next four; mobile Grid shows one card while preloading the next one.
+- Typography: passed. One self-hosted Lobster family is computed across visible title, control, panel, form, and status text. Forced uppercase is absent; the 150% root scale remains, and the preview no longer spends image space on an oversized archive watermark or compact per-card metadata.
+- Layout and spacing: passed in current browser captures. Desktop Horizontal media occupies `870px` of a `1080px` viewport. Desktop Grid shows two four-card rows while retaining one bounded four-card overscan row; mobile Grid shows two cards while retaining one bounded overscan card.
 - Color and surfaces: passed. Deep black/plum backgrounds, warm off-white display text, muted gray metadata, and an Instagram-inspired orange/magenta/violet gradient replace the earlier acid-lime accent. Selected photos have no border.
 - Image quality: passed. The demo uses bundled WebP photography at native aspect ratio and `object-fit: contain`. Imported unresolved Instagram sources use a square media crop that visually excludes the profile header, View more on Instagram, social actions, counts, comments, and footer. Visible cards plus the next three items may preload within a three-request concurrency gate.
-- Icons: passed. Lucide icons share one stroke family and remain paired with understandable `Horizontal View`, `Grid View`, Filter, Settings, and Slideshow labels.
+- Icons and controls: passed. Lucide icons share one stroke family and remain paired with readable labels. Filter, Settings, and Slideshow use the same recognizable button construction; slideshow Previous, Play/Pause, and Next now expose visible text and equal computed dimensions.
 - Copy and content: passed. The product name is `Instagram Viewer`; source/media totals, creator/collection captions, frame labels, and rejected per-card action copy are absent from the browsing surfaces.
 - Responsiveness: passed in implementation, tests, and current captures. Desktop uses exactly four Grid columns; tablet uses two and mobile uses one. Both browsing modes use bounded render windows and visually hidden scrollbars. The revised dock is visible in the current `390 × 844` capture.
 - Accessibility: passed for the implemented checkpoint. Semantic buttons, labels, image alt text, visible focus treatment, keyboard playback shortcuts, and reduced-motion CSS remain present. Global `user-select: none` follows the requested gallery behavior; form controls remain keyboard-operable.
@@ -44,6 +44,7 @@ The visual language follows the supplied PhotoYoshi reference: oversized clipped
 - The empty-library route rendered the JSON upload composition with document dimensions matching the viewport.
 - The real local-library route correctly returned the upload screen when IndexedDB contained no imported records.
 - A V1 resolved-media file containing three embedded WebP images imported through the real browser file input as three ordered direct-image cards with distinct stable IDs and no iframes.
+- Computed desktop controls share `19.2px` text, `52px` height, and `16px` radius; mobile controls share `16.32px`, `46px`, and `14px`. Every inspected control reports `Lobster, cursive` and `text-transform: none`.
 
 ## Iteration History
 
@@ -136,6 +137,15 @@ The visual language follows the supplied PhotoYoshi reference: oversized clipped
 - [P2] Text selection and utilitarian type weakened the intended gallery character; the first generated cursor was subsequently reported as oversized.
   - Fix: disabled selection globally, moved display typography to a fashion-editorial serif paired with a modern system UI stack, and standardized application-controlled surfaces on one native-size default cursor. Cross-origin iframe internals remain outside parent CSS control.
 
+### Iteration 10
+
+- [P1] The viewer still mixed a system UI stack with a separate Bodoni/Didot display stack, so the title, tabs, dock, sheets, and slideshow did not read as one product.
+  - Fix: bundled Lobster from the official Google Fonts repository and applied it as the single family across application text and controls.
+- [P1] The Landing wordmark and Slideshow action still used all-caps while other labels used mixed casing, and Filter/Settings appeared as bare text rather than clear buttons.
+  - Fix: changed the wordmark to title case, removed forced text transforms, and introduced one bordered, filled, rounded control treatment for tabs and actions.
+- [P1] Previous/Next were `40px` icon-only squares while Play was a `52px` gradient square, making transport controls visually inconsistent and less recognizable.
+  - Fix: added visible Previous/Play-or-Pause/Next labels and standardized all transport metrics; Settings, Hide, and Close use the same control language.
+
 ## Known Data Boundary
 
 Instagram `saved_posts.json` does not contain carousel-child media, original image bytes, or reliable thumbnails. It does contain post URLs plus some owner and descriptive metadata, which the importer preserves. The only user workflow is Saved JSON; eligible posts load from Instagram through public embeds. An embed may display its own carousel, but the parent viewer cannot inspect the cross-origin iframe or flatten its children into independent native cards. The app does not scrape Instagram, request pasted credentials, or fabricate media children.
@@ -145,11 +155,11 @@ Instagram `saved_posts.json` does not contain carousel-child media, original ima
 - `npm run lint`: passed.
 - `npm test`: 14 files and 52 tests passed, including official oEmbed availability handling, silent source omission, triple-ahead preload, per-child slideshow button/keyboard order and history, interactive iframe pausing, resolved-manifest parser regressions, transaction rollback, Grid/Horizontal end reachability, mixed-aspect viewport coverage, direct-image fallback, responsive dense Grid behavior, and iframe timeout queue draining.
 - `npm run build`: passed.
-- Fresh local Chrome evidence confirms `24px` root text, hidden scrollbars, two visible desktop Grid rows, bounded DOM windows, an `870px` Horizontal surface, current mobile dock layout, rounded dark edges, and last-media reachability.
+- Fresh local Chrome evidence confirms `24px` root text, a single Lobster family, no forced uppercase, equal per-viewport control metrics, hidden scrollbars, two visible desktop Grid rows, bounded DOM windows, an `870px` Horizontal surface, current mobile dock layout, rounded dark edges, and last-media reachability.
 - Current Grid evidence mounted twelve cards: eight visible and four in the next bounded row. Horizontal kept its visible window plus three-photo side overscan. Compatibility navigation permission is limited to visible cards plus the next three, and active iframe navigation remains capped at three.
 - Slideshow evidence advanced a resolved three-photo post to `03 / 03` by button then keyboard, retained the exact `5s` default, and kept the image inside `0–1080px`. Mock compatibility evidence measured an interactive focusable iframe at y=`92–988px`; focus paused playback. Cross-origin iframe child state remains intentionally unobservable.
 - A controlled browser import containing two available posts and one oEmbed-rejected post retained exactly two cards/two iframes, removed the rejected card, and exposed no failure copy.
-- Browser-uploaded three-photo internal fixture evidence confirms three ordered direct-image cards, stable IDs, and zero iframes at `artifacts/audit-04-manifest-grid.png`.
+- Browser-uploaded three-photo internal fixture evidence confirms three ordered direct-image cards, stable IDs, and zero iframes at `artifacts/audit-04-manifest-grid.png`; the equal-size labeled transport is recorded at `artifacts/audit-05-slideshow-controls.png`.
 - Known independent child-media records advance one frame at a time before the next post. Ordinary saved JSON still contains no carousel-child URLs; the cross-origin compatibility iframe cannot be auto-clicked or flattened by the parent viewer.
 
 Current saved-JSON compatibility viewer and accepted MVP checkpoint: passed.

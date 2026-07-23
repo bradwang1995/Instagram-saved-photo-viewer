@@ -27,7 +27,7 @@ An Instagram embed is a cross-origin document controlled by Instagram. The viewe
 
 ## Current Viewer Refinement
 
-The active UI is branded `Instagram Viewer`. Its non-clickable italic wordmark uses the same pink/orange/violet family as Slideshow, and the two browsing modes are presented as large top-center tabs named `Horizontal View` and `Grid View`.
+The active UI is branded `Instagram Viewer`. The app self-hosts the open-source Lobster typeface and uses it consistently for the non-clickable gradient wordmark, view tabs, buttons, sheets, form controls, and status text. Controls preserve their written capitalization instead of forcing all-caps. The two browsing modes remain large top-center tabs named `Horizontal View` and `Grid View`.
 
 - Horizontal View uses a virtual media track: only visible photos and three neighboring items on each side are mounted. At `1920 × 1080`, the media surface is `870px` high, leaving only a small controlled gap between media and the overlaid page chrome.
 - Grid View is four square columns on desktop and shows two compact rows in the active viewport. A third row remains mounted as bounded overscan, so a large desktop library keeps no more than twelve cards in the DOM; mobile keeps at most three.
@@ -37,7 +37,8 @@ The active UI is branded `Instagram Viewer`. Its non-clickable italic wordmark u
 - The full media list remains reachable through the virtual track, and both scrollbars stay visually hidden.
 - Horizontal View and Grid View are represented by `?view=horizontal` and `?view=grid`. Switching modes adds an in-app history entry, so browser Back and Forward restore the matching URL, active tab, and rendered layout; direct view-specific URLs also restore on refresh.
 - The page prevents text/image selection and keeps one native-size default cursor across application-controlled hover, click, and drag surfaces. A cross-origin Instagram iframe may still choose its own cursor internally because parent-page CSS cannot style the embedded document.
-- Slideshow defaults to five seconds, fills the viewport behind overlaid controls, uses the pink/orange/violet theme, and pushes `?slideshow=1` so browser Back returns to the photo field. Known resolved children advance in source order before the next post; after the last known child, manual or timed navigation advances to the next post under the selected loop mode.
+- Tabs, Import, Filter, Settings, Slideshow, sheet actions, and slideshow transport share one recognizable rounded dark-button treatment with a gradient edge. Desktop controls use the same `19.2px` font, `52px` height, and `16px` radius; the responsive mobile set uses the same `16.32px` font, `46px` height, and `14px` radius.
+- Slideshow defaults to five seconds, fills the viewport behind overlaid controls, uses visible Previous/Play-or-Pause/Next labels, and pushes `?slideshow=1` so browser Back returns to the photo field. Known resolved children advance in source order before the next post; after the last known child, manual or timed navigation advances to the next post under the selected loop mode.
 
 Ordinary `saved_posts.json` imports use one bounded compatibility preview per post because the export contains no child URLs. In Slideshow, that iframe is focusable, playable, scrollable, and left free of a blocking application overlay; focusing or pointing into it pauses autoplay. Users can operate Instagram's native carousel controls, but the parent cannot read or command the cross-origin carousel. Parent-page arrow keys therefore do not skip an unresolved interactive post, while explicit Previous/Next post buttons remain available. The app does not scrape Instagram or fabricate children from a cross-origin iframe.
 
